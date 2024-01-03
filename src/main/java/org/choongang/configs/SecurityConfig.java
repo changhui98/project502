@@ -34,7 +34,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests( c-> {
            c.requestMatchers("/mypage/**").authenticated()
-                   .requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "MANAGER")
+                   //.requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "MANAGER")
                    .anyRequest().permitAll();
 
         });
