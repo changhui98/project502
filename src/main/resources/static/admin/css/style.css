@@ -65,6 +65,27 @@ header .btn_area a:last-of-type {
 
 /* 헤더 영역 End */
 
+/* 제목 공통 Start */
+
+h1 {
+    margin: 0;
+    padding: 0 0 20 10px;
+    line-height: 1;
+    font-sze: 2rem;
+    border-bottom: 2px solid #222;
+    margin-bottom: 30px;
+
+}
+
+h2 {
+    margin:0;
+    font-size: 1.385rem;
+    line-height: 1;
+}
+
+
+/* 제목 공통 End */
+
 /* 내용 영역 Start */
 
 main {
@@ -149,3 +170,54 @@ nav.submenus a.on {
 }
 
 /* 내용 영역 End */
+
+/* 입력 공통 S */
+input[type='text'],
+input[type='number'],
+input[type='email'],
+input[type='password'] { border: 1px solid #d5d5d5; height: 35px; padding: 0 10px; }
+
+textarea {
+    border: 1px solid #d5d5d5;
+    min-height: 200px;
+    padding: 10px;
+    resize: none;
+    width:100%;
+
+}
+
+select {
+    border: 1px solid #d5d5d5;
+    height: 35px;
+
+}
+/* 입력 공통 E */
+
+/* 버튼 공통 Start */
+.submit_btns {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.submit_btns .btn {
+    display: inline-block;
+    min-width: 200px;
+    height: 45px;
+    padding: 0 15px;
+    border: 1px solid #222;
+    background: #fff;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #222;
+    border-radius: 3px;
+    cursor: pointer;
+
+}
+
+.submit_btns .btn:last-of-type {
+    background: #222;
+    color: #fff;
+
+}
+
+/* 버튼 공통 End */
