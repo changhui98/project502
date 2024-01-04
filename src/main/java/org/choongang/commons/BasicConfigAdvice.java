@@ -18,6 +18,7 @@ public class BasicConfigAdvice {
         BasicConfig config = infoService.get("basic", BasicConfig.class).orElseGet(BasicConfig::new);
 
 
+
         return config;
     }
 }
