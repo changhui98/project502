@@ -3,9 +3,12 @@ package org.choongang.commons;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.choongang.admin.config.controllers.BasicConfig;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 @Component
@@ -67,5 +70,27 @@ public class Utils {
 
     public static String getMessage(String code){
         return getMessage(code, null);
+    }
+
+
+    public List<int[]> getThumbSize(){
+        BasicConfig basicConfig = (BasicConfig) request.getAttribute("siteConfig");
+        String thumbSize = basicConfig.getThumbSize();
+        String[] thumbsSize = thumbSize.split("\\n");
+
+        List<int[]> data = Arrays.stream(thumbsSize)
+                        .filter(StringUtils::hasText)
+                        .map(s->s.replaceAll("\\s+",""))
+                        .map(this::toConvert).toList();
+
+        return data;
+    }
+
+    private int[] toConvert(String size){
+        size = size.trim();
+        int[] data = Arrays.stream(size.replaceAll("\\r", "").toUpperCase().split("X"))
+                .mapToInt(Integer::parseInt).toArray();
+
+        return data;
     }
 }
