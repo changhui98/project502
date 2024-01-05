@@ -3,6 +3,7 @@ package org.choongang.file.service;
 import com.querydsl.core.BooleanBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import net.coobird.thumbnailator.Thumbnails;
 import org.choongang.configs.FileProperties;
 import org.choongang.file.entitys.FileInfo;
 import org.choongang.file.entitys.QFileInfo;
@@ -12,6 +13,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.Order.asc;
@@ -100,6 +104,63 @@ public class FileInfoService {
         String fileUrl = request.getContextPath() + fileProperties.getUrl() + dir + "/" + fileName;
         fileInfo.setFilePath(filePath);
         fileInfo.setFileUrl(fileUrl);
+
+        List<String> thumbsPath = new ArrayList<>();
+        List<String> thumbsUrl = new ArrayList<>();
+
+        String thumbDir = getThumbDir(seq);
+        String thumbUrl = getThumbUrl(seq);
+
+        File _thumbDir = new File(thumbDir);
+        if(_thumbDir.exists()){
+            for(String thumbFileName : _thumbDir.list()){
+                thumbsPath.add(thumbDir + "/" + thumbFileName);
+                thumbsUrl.add(thumbUrl + "/" + thumbFileName);
+            }
+        }
+
+        fileInfo.setThumbsPath(thumbsPath);
+        fileInfo.setThumbsUrl(thumbsUrl);
     }
 
+    public String[] getThumb(long seq, int width, int height){
+        FileInfo fileInfo = get(seq);
+        String fileType = fileInfo.getFileType();
+        if(fileType.indexOf("image/") == -1){
+            return null;
+        }
+        String fileName = seq + fileInfo.getExtension();
+
+        String thumbDir = getThumbDir(seq);
+        File _thumbDir = new File(thumbDir);
+        if(!_thumbDir.exists()){
+            _thumbDir.mkdirs();
+        }
+
+        String thumbPath = String.format("%s/%d_%d_%s", thumbDir, width, height, fileName);
+        File _thumbPath = new File(thumbPath);
+        if(!_thumbPath.exists()){
+            try {
+                Thumbnails.of(new File(fileInfo.getFilePath()))
+                        .size(width, height)
+                        .toFile(_thumbPath);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+        String thumbUrl = String.format("%s/%d_%d_%s", getThumbUrl(seq), width, height, fileName);
+
+        return new String[] { thumbPath, thumbUrl};
+    }
+
+    public String getThumbDir(long seq) {
+
+        String thumbDirCommon = "thumbs/" + (seq % 10L) + "/" + seq;
+        return fileProperties.getPath() + thumbDirCommon;
+    }
+
+    public String getThumbUrl(long seq) {
+        String thumbDirCommon = "thumbs/" + (seq % 10L) + "/" + seq;
+        return fileProperties.getUrl() + thumbDirCommon;
+    }
 }
