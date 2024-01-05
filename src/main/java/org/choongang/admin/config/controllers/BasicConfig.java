@@ -15,6 +15,8 @@ public class BasicConfig {
 
     private String joinTerms = "";
 
+    private String thumbSize = "";
+
 
 
 }
