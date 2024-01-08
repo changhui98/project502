@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller("adminBoardController")
@@ -62,6 +63,8 @@ public class BoardController implements ExceptionProcessor {
         String pageTitle = "게시판 목록";
         mode = StringUtils.hasText(mode) ? mode : "list";
 
+
+
         if(mode.equals("add")){
             pageTitle = "게시판 등록";
         } else if(mode.equals("edit")){
@@ -70,7 +73,17 @@ public class BoardController implements ExceptionProcessor {
             pageTitle = "게시글 관리";
         }
 
+        List<String> addCommonScript = new ArrayList<>();
+        List<String> addScript = new ArrayList<>();
+        if(mode.equals("add") || mode.equals("edit")) { // 게시판 등록 또는 수정
+            addCommonScript.add("ckeditor5/ckeditor");
+            addScript.add("board/form");
+        }
+
         model.addAttribute("pageTitle", pageTitle);
+        model.addAttribute("subMenuCode", mode);
+        model.addAttribute("addCommonScript",addCommonScript);
+        model.addAttribute("addScript", addScript);
     }
 
 
