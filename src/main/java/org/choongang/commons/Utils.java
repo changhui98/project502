@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 @Component
@@ -114,6 +115,15 @@ public class Utils {
     public String printThumb(long seq, int width, int height){
 
         return printThumb(seq, width, height, null);
+    }
+
+    public String nl2br(String str){
+        str = Objects.requireNonNullElse(str,"");
+
+        str = str.replaceAll("\\n","<br>")
+                .replaceAll("\\r","");
+
+        return str;
     }
 
 

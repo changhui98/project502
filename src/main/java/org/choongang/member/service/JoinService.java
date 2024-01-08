@@ -36,6 +36,8 @@ public class JoinService {
         member.setName(form.getName());
         member.setPassword(hash);
         member.setUserId(form.getUserId());
+        member.setGid(form.getGid());
+
         process(member);
 
         // 회원 가입시에는 일반 사용자 권한 부여(user)
