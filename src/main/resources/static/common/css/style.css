@@ -1,17 +1,21 @@
 /* 여백 공통 */
-.mb30 { margin-bottom: 30px; }
+.mb30 {
+    margin-bottom: 30px;
+}
 
 .dn {
-    display: none !important;
+    display: none
+    !important;
 }
 
 .image1_tpl_box {
     border: 1px solid #222;
-    position : relative;
+    position: relative;
+    width: 250px;
 }
 
 .image1_tpl_box > .inner {
-    width: 250px;
+    width: 100%;
     height: 250px;
 }
 
@@ -29,11 +33,6 @@
 }
 
 .image1_tpl_box .remove > i {
-    color:#fff;
-    font-size: 1.15rem;
-}
-
-/* 위지윅 에디터 공통 */
-.ck-editor__editable {
-    min-height: 300px;
+    color: #fff;
+    font-size: 1rem;
 }

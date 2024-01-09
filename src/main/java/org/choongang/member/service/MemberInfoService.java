@@ -25,7 +25,7 @@ public class MemberInfoService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByEmail(username)
-                        .orElseGet(()-> memberRepository.findByUserId(username).orElseThrow(MemberNotFoundException::new));
+                        .orElseGet(()-> memberRepository.findByUserId(username).orElseThrow(() ->new UsernameNotFoundException(username)));
 
         List<SimpleGrantedAuthority> authorities = null;
         List<Authorities> tmp = member.getAuthorities();

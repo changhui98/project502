@@ -35,7 +35,7 @@ function callbackFileUpload(files) {
 *
 * @param seq : 파일 등록 번호
 */
-function callbackFileDelete(seq){
+function callbackFileDelete(seq) {
     const fileEl = document.getElementById(`file_${seq}`);
     fileEl.parentElement.removeChild(fileEl);
 }
