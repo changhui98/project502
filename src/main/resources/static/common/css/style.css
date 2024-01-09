@@ -5,17 +5,17 @@
     display: none !important;
 }
 
-.image1_tp1_box {
+.image1_tpl_box {
     border: 1px solid #222;
     position : relative;
 }
 
-.image1_tp1_box > .inner {
+.image1_tpl_box > .inner {
     width: 250px;
     height: 250px;
 }
 
-.image1_tp1_box .remove {
+.image1_tpl_box .remove {
     position: absolute;
     top: 0;
     right: 0;
@@ -28,7 +28,12 @@
     cursor: pointer;
 }
 
-.image1_tp1_box .remove > i {
+.image1_tpl_box .remove > i {
     color:#fff;
     font-size: 1.15rem;
+}
+
+/* 위지윅 에디터 공통 */
+.ck-editor__editable {
+    min-height: 300px;
 }
