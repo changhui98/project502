@@ -1,6 +1,8 @@
 package org.choongang.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.choongang.file.entitys.FileInfo;
+import org.choongang.file.service.FileInfoService;
 import org.choongang.member.entitys.Authorities;
 import org.choongang.member.entitys.Member;
 import org.choongang.member.repositorys.MemberRepository;
@@ -17,6 +19,7 @@ import java.util.List;
 public class MemberInfoService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final FileInfoService fileInfoService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -31,6 +34,15 @@ public class MemberInfoService implements UserDetailsService {
                     .map(s -> new SimpleGrantedAuthority(s.getAuthority().name()))
                     .toList();
         }
+
+        // 프로필 이미지 처리 Start
+        List<FileInfo> files = fileInfoService.getListDone(member.getGid());
+        if(files != null && !files.isEmpty()){
+            member.setProfileImage(files.get(0));
+        }
+
+
+        // 프로필 이미지 처리 End
 
 
         return MemberInfo.builder()
