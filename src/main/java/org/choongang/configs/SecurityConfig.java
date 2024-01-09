@@ -18,6 +18,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        // 인증 설정 Start - 로그인, 로그아웃
         http.formLogin(f -> {
                 f.loginPage("/member/login")
                         .usernameParameter("username")
@@ -31,20 +33,30 @@ public class SecurityConfig {
                     .logoutSuccessUrl("/member/login");
         });
 
+        // 인증 설정 End - 로그인, 로그아웃
 
+
+        // 인가 설정 Start - 접근 통제
+        /*
+            hasAuthority(..) hasAnyAuthority(...), hasRole, hasAnyRole
+            ROLE_롤 명칭
+            hasAuthority('ADMIN')
+            ROLE_ADMIN -> hasAuthority('ROLE_ADMIN')
+            hasRole ('ADMIN')
+         */
         http.authorizeHttpRequests( c-> {
-           c.requestMatchers("/mypage/**").authenticated()
+           c.requestMatchers("/mypage/**").authenticated() // 회원전용
                    //.requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "MANAGER")
-                   .anyRequest().permitAll();
+                   .anyRequest().permitAll(); // 그외 모든 페이지는 모두 접근 가능
 
         });
 
         http.exceptionHandling(c -> {
            c.authenticationEntryPoint((req, res, e) -> {
              String URL = req.getRequestURI();
-             if(URL.indexOf("/admin")!= -1){
+             if(URL.indexOf("/admin")!= -1){ // 관리자 페이지
                  res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-             }else {
+             }else { // 회원전용 페이지
                  res.sendRedirect(req.getContextPath() + "/member/login");
              }
            });
