@@ -52,12 +52,16 @@
         <dl>
             <dt th:text="#{프로필_이미지}"></dt>
             <dd>
-                <button type="button" class="upload_files" th:text="#{이미지_업로드}"></button>
+                <div id="profile_image">
+
+                </div>
+                <button type="button" class="upload_files"
+                        th:text="#{이미지_업로드}" data-image-only="true" data-single-file="true"></button>
             </dd>
         </dl>
 
         <div th:text="#{회원가입_약관}"></div>
-        <div class="terms" th:text="${siteConfig.joinTerms}">약관...</div>
+        <div class="terms" th:utext="${@utils.nl2br(siteConfig.joinTerms)}"></div>
         <div class="terms_agree">
             <input type="checkbox" name="agree" value="true" id="agree" th:field="*{agree}">
             <label for="agree" th:text="#{회원가입_약관에_동의합니다.}"></label>
@@ -66,5 +70,7 @@
         </div>
         <button type="submit" th:text="#{가입하기}"></button>
     </form>
+
+
 </main>
 </html>
