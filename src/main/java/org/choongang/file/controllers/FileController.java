@@ -39,7 +39,7 @@ public class FileController implements ExceptionProcessor {
 
     @ResponseBody
     @RequestMapping("/download/{seq}")
-    public void download(@PathVariable("seq") Long seq, HttpServletResponse response) {
+    public void download(@PathVariable("seq") Long seq) {
         try {
             downloadService.download(seq);
 

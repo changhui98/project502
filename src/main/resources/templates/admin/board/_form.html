@@ -9,7 +9,7 @@
                 <input type="radio" name="active" value="true" id="active_true">
                 <label for="active_true">사용</label>
 
-                <input type="radio" name="active" value="true" id="active_false">
+                <input type="radio" name="active" value="false" id="active_false">
                 <label for="active_false">미사용</label>
             </td>
         </tr>
@@ -26,36 +26,44 @@
             </td>
         </tr>
         <tr>
-            <th>페이지 게시글 수</th>
+            <th>1페이지 게시글 수</th>
             <td>
                 <input type="number" name="rowsPerPage" min="1">
             </td>
-            <tr>
-                <th>페이지 구간 갯수(PC)</th>
-                <td>
-                    <input type="number" name="pageContPc" min="1">
-                </td>
-            </tr>
-            <tr>
-                <th>답글 사용</th>
-                <td>
-                    <input type="radio" name="useReply" value="true" id="useReply_true">
-                    <label for="useReply_true">사용</label>
+        </tr>
+        <tr>
+            <th>페이지 구간 갯수(PC)</th>
+            <td>
+                <input type="number" name="pageCountPc" min="1">
+            </td>
+        </tr>
+        <tr>
+            <th>페이지 구간 갯수(Mo)</th>
+            <td>
+                <input type="number" name="pageCountMobile" min="1">
+            </td>
+        </tr>
+        <tr>
+            <th>답글 사용</th>
+            <td>
+                <input type="radio" name="useReply" value="true" id="useReply_true">
+                <label for="useReply_true">사용</label>
 
-                    <input type="radio" name="useReply" value="false" id="useReply_false">
-                    <label for="useReply_false">미사용</label>
-                </td>
-            </tr>
-            <tr>
-                <th>댓글 사용</th>
-                <td>
-                    <input type="radio" name="useComment" value="true" id="useComment_true">
-                    <label for="useComment_true">사용</label>
+                <input type="radio" name="useReply" value="false" id="useReply_false">
+                <label for="useReply_false">미사용</label>
+            </td>
+        </tr>
+        <tr>
+            <th>댓글 사용</th>
+            <td>
+                <input type="radio" name="useComment" value="true" id="useComment_true">
+                <label for="useComment_true">사용</label>
 
-                    <input type="radio" name="useComment" value="false" id="useComment_false">
-                    <label for="useComment_false">미사용</label>
-                </td>
-            </tr>
+                <input type="radio" name="useComment" value="false" id="useComment_false">
+                <label for="useComment_false">미사용</label>
+            </td>
+        </tr>
+
         <tr>
             <th>에디터</th>
             <td>
@@ -85,7 +93,7 @@
                 <label for="useUploadFile_true">사용</label>
 
                 <input type="radio" name="useUploadFile" value="false" id="useUploadFile_false">
-                <label for="useUploadFile_false">미사용</label>
+                <label for="useUploadFile_false">사용</label>
             </td>
         </tr>
 
@@ -93,7 +101,8 @@
             <th>글작성 후 이동</th>
             <td>
                 <input type="radio" name="locationAfterWriting" value="list" id="locationAfterWriting_list">
-                <label for="locationAfterWriting_list">목록</label>
+                <label for="locationAfterWriting_list">글목록</label>
+
                 <input type="radio" name="locationAfterWriting" value="view" id="locationAfterWriting_view">
                 <label for="locationAfterWriting_view">글보기</label>
             </td>
@@ -125,7 +134,7 @@
         <tr>
             <th>분류</th>
             <td>
-                <textarea name="category" placeholder="여러 분류는 줄개행아형 입력"></textarea>
+                <textarea name="category" placeholder="여러 분류는 줄개행하여 입력"></textarea>
             </td>
         </tr>
     </table>
@@ -200,11 +209,11 @@
     </table>
 
     <h2>게시판 상단</h2>
-    <table class="table_cols">
+    <table class="table_cols mb30">
         <tr>
             <th>내용</th>
             <td>
-                <textarea id="html_top" name="html_top"></textarea>
+                <textarea id="html_top" name="htmlTop"></textarea>
             </td>
         </tr>
     </table>
@@ -217,7 +226,7 @@
                 <textarea id="html_bottom" name="htmlBottom"></textarea>
             </td>
         </tr>
-
     </table>
+
 </th:block>
 </html>
