@@ -56,9 +56,6 @@ public class BoardController implements ExceptionProcessor {
     }
 
 
-
-
-
     private void commonProcess(String mode, Model model){
         String pageTitle = "게시판 목록";
         mode = StringUtils.hasText(mode) ? mode : "list";
@@ -77,6 +74,7 @@ public class BoardController implements ExceptionProcessor {
         List<String> addScript = new ArrayList<>();
         if(mode.equals("add") || mode.equals("edit")) { // 게시판 등록 또는 수정
             addCommonScript.add("ckeditor5/ckeditor");
+            addCommonScript.add("fileManager");
             addScript.add("board/form");
         }
 
