@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.choongang.commons.ListData;
 import org.choongang.commons.Pagination;
 import org.choongang.commons.Utils;
 import org.choongang.file.entitys.FileInfo;
@@ -54,9 +55,7 @@ public class MemberInfoService implements UserDetailsService {
             member.setProfileImage(files.get(0));
         }
 
-
         // 프로필 이미지 처리 End
-
 
         return MemberInfo.builder()
                 .email(member.getEmail())
@@ -67,7 +66,13 @@ public class MemberInfoService implements UserDetailsService {
                 .build();
     }
 
-    public getList(MemberSearch search){
+    /**
+     * 회원 목록
+     * @param search
+     * @return
+     */
+    public ListData<Member> getList(MemberSearch search){
+
         int page = Utils.onlyPositiveNumber(search.getPage(),1); // 페이지 번호
         int limit = Utils.onlyPositiveNumber(search.getLimit(),20); // 1페이지당
         int offset = (page - 1) * limit; // 레코드 시작 위치 번호
@@ -99,7 +104,7 @@ public class MemberInfoService implements UserDetailsService {
         /*
             페이징 처리 End
          */
-        )
 
+        return new ListData<>(items, pagination);
     }
 }
