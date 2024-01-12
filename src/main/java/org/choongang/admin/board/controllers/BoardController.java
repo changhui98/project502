@@ -1,9 +1,15 @@
-package org.choongang.admin.board;
+package org.choongang.admin.board.controllers;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.choongang.admin.menus.Menu;
 import org.choongang.admin.menus.MenuDetail;
+import org.choongang.board.entitys.Board;
+import org.choongang.board.service.config.BoardConfigInfoService;
+import org.choongang.board.service.config.BoardConfigSaveService;
 import org.choongang.commons.ExceptionProcessor;
+import org.choongang.commons.ListData;
+import org.choongang.commons.Pagination;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -18,7 +24,12 @@ import java.util.List;
 
 @Controller("adminBoardController")
 @RequestMapping("/admin/board")
+@RequiredArgsConstructor
 public class BoardController implements ExceptionProcessor {
+
+    private final BoardConfigSaveService configSaveService;
+    private final BoardConfigInfoService configInfoService;
+    private final BoardConfigValidator configValidator;
 
     // 주 메뉴 코드
     @ModelAttribute("menuCode")
@@ -35,18 +46,28 @@ public class BoardController implements ExceptionProcessor {
 
     /**
      * 게시판 목록
+     *
      * @param model
      * @return
      */
     @GetMapping
-    public String list(Model model){
+    public String list(@ModelAttribute BoardSearch search, Model model){
         commonProcess("list", model);
+
+        ListData<Board> data = configInfoService.getList(search);
+
+        List<Board> items = data.getItems();
+        Pagination pagination = data.getPagination();
+
+        model.addAttribute("items", items);
+        model.addAttribute("pagination", pagination);
 
         return "admin/board/list";
     }
 
     /**
      * 게시판 등록
+     *
      * @param config
      * @param model
      * @return
@@ -60,6 +81,7 @@ public class BoardController implements ExceptionProcessor {
 
     /**
      * 게시판 등록/수정 처리
+     *
      * @param config
      * @param errors
      * @param model
@@ -71,15 +93,20 @@ public class BoardController implements ExceptionProcessor {
 
         commonProcess(mode, model);
 
+        configValidator.validate(config, errors);
+
         if(errors.hasErrors()){
             return "admin/board/" + mode;
         }
+
+        configSaveService.save(config);
 
         return "redirect:/admin/board";
     }
 
     /**
      * 게시글 관리
+     *
      * @param model
      * @return
      */
@@ -89,9 +116,9 @@ public class BoardController implements ExceptionProcessor {
         return "admin/board/posts";
     }
 
-
     /**
      * 공통 처리
+     *
      * @param mode
      * @param model
      */
@@ -124,8 +151,4 @@ public class BoardController implements ExceptionProcessor {
         model.addAttribute("addCommonScript",addCommonScript);
         model.addAttribute("addScript", addScript);
     }
-
-
-
-
 }
