@@ -34,7 +34,7 @@ public class BasicConfigController implements ExceptionProcessor {
         return Menu.getMenus("config");
     }
 
-    @ModelAttribute("subMenuCode");
+    @ModelAttribute("subMenuCode")
     public String getSubMenuCode(){
         return "basic";
     }

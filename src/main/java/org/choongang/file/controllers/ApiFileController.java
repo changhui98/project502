@@ -30,8 +30,7 @@ public class ApiFileController implements ExceptionRestProcessor {
         List<FileInfo> uploadedFiles =uploadService.upload(files, gid, location, imageOnly, singleFile);
 
         return new JSONData<>(uploadedFiles);
-
-
+        
     }
 
     @GetMapping("/{seq}")

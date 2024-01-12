@@ -1,4 +1,4 @@
-package org.choongang.admin.board;
+package org.choongang.admin.board.controllers;
 
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
