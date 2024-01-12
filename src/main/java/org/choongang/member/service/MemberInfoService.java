@@ -38,8 +38,9 @@ public class MemberInfoService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Member member = memberRepository.findByEmail(username)
-                        .orElseGet(()-> memberRepository.findByUserId(username).orElseThrow(() ->new UsernameNotFoundException(username)));
+        Member member = memberRepository.findByEmail(username) // 이메일 조회
+                        .orElseGet(()-> memberRepository.findByUserId(username) // 아이디로 조회
+                                .orElseThrow(() ->new UsernameNotFoundException(username)));
 
         List<SimpleGrantedAuthority> authorities = null;
         List<Authorities> tmp = member.getAuthorities();
@@ -68,6 +69,7 @@ public class MemberInfoService implements UserDetailsService {
 
     /**
      * 회원 목록
+     *
      * @param search
      * @return
      */

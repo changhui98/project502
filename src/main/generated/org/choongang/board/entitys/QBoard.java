@@ -33,13 +33,31 @@ public class QBoard extends EntityPathBase<Board> {
     //inherited
     public final StringPath createdBy = _super.createdBy;
 
+    public final StringPath gid = createString("gid");
+
+    public final StringPath locationAfterWriting = createString("locationAfterWriting");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
 
     //inherited
     public final StringPath modifiedBy = _super.modifiedBy;
 
+    public final NumberPath<Integer> pageCountMobile = createNumber("pageCountMobile", Integer.class);
+
+    public final NumberPath<Integer> pageCountPc = createNumber("pageCountPc", Integer.class);
+
     public final NumberPath<Integer> rowsPerPage = createNumber("rowsPerPage", Integer.class);
+
+    public final BooleanPath useComment = createBoolean("useComment");
+
+    public final BooleanPath useEditor = createBoolean("useEditor");
+
+    public final BooleanPath useReply = createBoolean("useReply");
+
+    public final BooleanPath useUploadFile = createBoolean("useUploadFile");
+
+    public final BooleanPath useUploadImage = createBoolean("useUploadImage");
 
     public QBoard(String variable) {
         super(Board.class, forVariable(variable));

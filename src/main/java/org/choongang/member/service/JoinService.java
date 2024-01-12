@@ -1,7 +1,6 @@
 package org.choongang.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUpload;
 import org.choongang.file.service.FileUploadService;
 import org.choongang.member.Authority;
 import org.choongang.member.controllers.JoinValidator;
@@ -32,6 +31,7 @@ public class JoinService {
             return;
         }
 
+        // 비밀번호 BCrypt 로 해시화
         String hash = encoder.encode(form.getPassword());
 
         Member member= new Member();

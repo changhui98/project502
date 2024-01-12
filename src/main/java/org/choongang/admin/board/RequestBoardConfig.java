@@ -1,8 +1,11 @@
 package org.choongang.admin.board;
 
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.choongang.file.entitys.FileInfo;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -54,5 +57,18 @@ public class RequestBoardConfig {
 
     private String htmlTop; // 게시판 상단 HTML
     private String htmlBottom; // 게시판 하단 HTML
+
+    private List<FileInfo> htmlTopImages;
+
+    private List<FileInfo> htmlBottomImages;
+
+    @Transient
+    private FileInfo logo1; // 로고 이미지1
+
+    @Transient
+    private FileInfo logo2; // 로고 이미지2
+
+    @Transient
+    private FileInfo logo3; // 로고 이미지3
 
 }
