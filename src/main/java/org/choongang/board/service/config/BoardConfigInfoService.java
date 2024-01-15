@@ -2,6 +2,7 @@ package org.choongang.board.service.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.choongang.admin.board.controllers.BoardSearch;
 import org.choongang.admin.board.controllers.RequestBoardConfig;
 import org.choongang.board.entitys.Board;
 import org.choongang.board.repository.BoardRepository;
