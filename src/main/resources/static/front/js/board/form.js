@@ -11,7 +11,7 @@ window.addEventListener("DOMContentLoaded" ,function(){
     /* 이미지 본문 추가 이벤트 처리 S  */
     const insertImages = document.getElementByClassName("insert_image");
     for(const el of insertImages) {
-        el.addEventListener("click",(e) => insertImage(e.dataset.url));
+        el.addEventListener("click",(e) => insertImage(e.currentTarget.dataset.url));
     }
 
     /* 이미지 본문 추가 이벤트 처리 E  */
@@ -57,7 +57,7 @@ function callbackFileUpload(files) {
         const fileBox = dom.querySelector(".file_tpl_box");
         targetEl.appendChild(fileBox);
 
-        const insertImageEl = dom.querySelector(".insert_image");
+        const insertImageEl = fileBox.querySelector(".insert_image");
         if(insertImageEl) insertImageEl.addEventListener("click", () => insertImage(file.fileUrl));
     }
 
@@ -68,5 +68,7 @@ function callbackFileUpload(files) {
 * 파일 삭제후 후속 처리
 */
 function callbackFileDelete(seq){
+    const fileBox = document.getElementById(`file_${seq}`);
+    fileBox.parentElement.removeChild(fileBox);
 
 }

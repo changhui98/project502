@@ -18,15 +18,11 @@ import java.util.ResourceBundle;
 public class Utils {
 
     private final HttpServletRequest request;
-
     private final HttpSession session;
-
     private final FileInfoService fileInfoService;
 
     private static final ResourceBundle commonsBundle;
-
     private static final ResourceBundle validationsBundle;
-
     private static final ResourceBundle errorsBundle;
 
     static {
@@ -36,7 +32,6 @@ public class Utils {
     }
 
     public boolean isMobile(){
-
         // 모바일 수동 전환 모드 체크
         String device = (String)session.getAttribute("device");
         if(StringUtils.hasText(device)){
@@ -76,7 +71,25 @@ public class Utils {
         return getMessage(code, null);
     }
 
+    /**
+     *  \n 또는 \r\n -> <br>
+     * @param str
+     * @return
+     */
+    public String nl2br(String str) {
+        str = Objects.requireNonNullElse(str, "");
 
+        str = str.replaceAll("\\n" , "<br>")
+                .replaceAll("\\r", "");
+
+        return str;
+    }
+
+
+    /**
+     * 썸네일 이미지 사이즈 설정
+     * @return
+     */
     public List<int[]> getThumbSize(){
         BasicConfig basicConfig = (BasicConfig) request.getAttribute("siteConfig");
         String thumbSize = basicConfig.getThumbSize();
@@ -101,7 +114,6 @@ public class Utils {
 
     public String printThumb(long seq, int width, int height, String className){
         String[] data = fileInfoService.getThumb(seq, width, height);
-
         if(data != null) {
             String cls = StringUtils.hasText(className) ? " class='" + className + "'" : "";
             String image = String.format("<img src='%s'%s>",data[1], cls);
@@ -117,15 +129,6 @@ public class Utils {
         return printThumb(seq, width, height, null);
     }
 
-    public String nl2br(String str){
-        str = Objects.requireNonNullElse(str,"");
-
-        str = str.replaceAll("\\n","<br>")
-                .replaceAll("\\r","");
-
-        return str;
-    }
-
     /**
      * 0이하 정수 인 경우 1이상 정수로 대체
      * @param num
@@ -135,6 +138,25 @@ public class Utils {
     public static int onlyPositiveNumber(int num, int replace){
         return num < 1? replace : num;
     }
+
+    /**
+     * 요청 데이터 단일 조회 편의 함수
+     * @param name
+     * @return
+     */
+    public String getParam(String name){
+        return request.getParameter(name);
+    }
+
+    /**
+     * 요청 데이터 복수개 조회 편의 함수
+     * @param name
+     * @return
+     */
+    public String[] getParams(String name){
+        return request.getParameterValues(name);
+    }
+
 
 
 }
