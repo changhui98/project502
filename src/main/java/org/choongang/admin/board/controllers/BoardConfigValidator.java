@@ -27,7 +27,7 @@ public class BoardConfigValidator implements Validator {
 
         String bid = form.getBid();
         String mode = form.getMode();
-        if(mode.equals("add") && StringUtils.hasText(bid) && boardRepository.exists(bid)){
+        if(mode.equals("add") && StringUtils.hasText(bid) && boardRepository.existsById(bid)){
             errors.rejectValue("bid", "Duplicated");
         }
     }
