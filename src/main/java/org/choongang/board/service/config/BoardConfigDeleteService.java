@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.choongang.board.entitys.Board;
 import org.choongang.board.repository.BoardRepository;
 import org.choongang.commons.Utils;
+import org.choongang.commons.exceptions.AlertException;
 import org.choongang.file.service.FileDeleteService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,5 +32,14 @@ public class BoardConfigDeleteService {
         fileDeleteService.delete(gid);
     }
 
-    public void deleteList(List<Integer>)
+    public void deleteList(List<Integer> chks) {
+        if(chks == null || chks.isEmpty()) {
+            throw new AlertException("삭제할 게시판을 선택하세요.", HttpStatus.BAD_REQUEST);
+        }
+
+        for(int chk : chks) {
+            String bid = utils.getParam("bid_" + chk);
+            delete(bid);
+        }
+    }
 }

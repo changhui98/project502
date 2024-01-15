@@ -85,8 +85,8 @@ public class BoardConfigInfoService {
      * @param search
      * @return
      */
-    public ListData<Board> getList(BoardSearch search){
-        int page = Utils.onlyPositiveNumber(search.getPage() ,1);
+    public ListData<Board> getList(BoardSearch search) {
+        int page = Utils.onlyPositiveNumber(search.getPage(), 1);
         int limit = Utils.onlyPositiveNumber(search.getLimit(), 20);
 
         QBoard board = QBoard.board;
@@ -100,16 +100,16 @@ public class BoardConfigInfoService {
         sopt = StringUtils.hasText(sopt) ? sopt.trim() : "ALL";
         String skey = search.getSkey(); // 키워드
 
-        if(StringUtils.hasText(bid)) { // 게시판 ID
+        if (StringUtils.hasText(bid)) { // 게시판 ID
             andBuilder.and(board.bid.contains(bid.trim()));
         }
 
-        if(StringUtils.hasText(bName)){ // 게시판 명
+        if (StringUtils.hasText(bName)) { // 게시판 명
             andBuilder.and(board.bName.contains(bName.trim()));
         }
 
         // 조건별 키워드 검색
-        if(StringUtils.hasText(skey)){
+        if (StringUtils.hasText(skey)) {
             skey = skey.trim();
 
             BooleanExpression cond1 = board.bid.contains(skey);
@@ -118,9 +118,9 @@ public class BoardConfigInfoService {
             if (sopt.equals("bid")) {
                 andBuilder.and(cond1);
 
-            }else if(sopt.equals("bName")){
+            } else if (sopt.equals("bName")) {
                 andBuilder.and(cond2);
-            }else {
+            } else {
                 BooleanBuilder orBuilder = new BooleanBuilder();
                 orBuilder.or(cond1)
                         .or(cond2);
@@ -132,8 +132,9 @@ public class BoardConfigInfoService {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(desc("createdAt")));
         Page<Board> data = boardRepository.findAll(andBuilder, pageable);
 
-        Pagination pagination = new Pagination(page, (int)data.getTotalElements(), limit, 10, request);
+        Pagination pagination = new Pagination(page, (int) data.getTotalElements(), limit, 10, request);
 
         return new ListData<>(data.getContent(), pagination);
+    }
 
 }

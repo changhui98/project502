@@ -16,14 +16,14 @@ public class BoardConfigSaveService {
     private final BoardRepository boardRepository;
     private final FileUploadService fileUploadService;
 
-    public void save(RequestBoardConfig form){
+    public void save(RequestBoardConfig form) {
         String bid = form.getBid();
         String mode = form.getMode();
-        mode = StringUtils.hasText(mode) ? mode :"add";
+        mode = StringUtils.hasText(mode) ? mode : "add";
 
         Board board = boardRepository.findById(bid).orElseGet(Board::new);
 
-        if(mode.equals("add")){
+        if (mode.equals("add")) {
             board.setBid(bid);
             board.setGid(form.getGid());
         }
@@ -56,5 +56,5 @@ public class BoardConfigSaveService {
         // 파일 업로드 완료 처리
         fileUploadService.processDone(board.getGid());
 
-
+    }
 }
