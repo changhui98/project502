@@ -22,7 +22,7 @@ public class QBoardData extends EntityPathBase<BoardData> {
 
     public static final QBoardData boardData = new QBoardData("boardData");
 
-    public final org.choongang.commons.entitys.QBaseMember _super = new org.choongang.commons.entitys.QBaseMember(this);
+    public final org.choongang.commons.entitys.QBase _super = new org.choongang.commons.entitys.QBase(this);
 
     public final QBoard board;
 
@@ -30,9 +30,6 @@ public class QBoardData extends EntityPathBase<BoardData> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
-
-    //inherited
-    public final StringPath createdBy = _super.createdBy;
 
     public final StringPath gid = createString("gid");
 
@@ -50,9 +47,6 @@ public class QBoardData extends EntityPathBase<BoardData> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
-
-    //inherited
-    public final StringPath modifiedBy = _super.modifiedBy;
 
     public final BooleanPath notice = createBoolean("notice");
 
