@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.choongang.commons.entitys.BaseMember;
+import org.choongang.commons.entitys.Base;
 import org.choongang.file.entitys.FileInfo;
 import org.choongang.member.entitys.Member;
 
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Table(indexes = {
         @Index(name="idx_boardData_basic", columnList = "notice DESC, createdAt DESC")
 })
-public class BoardData extends BaseMember {
+public class BoardData extends Base {
 
     @Id @GeneratedValue
     private Long seq;

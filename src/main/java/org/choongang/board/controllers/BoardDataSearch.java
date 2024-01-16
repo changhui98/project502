@@ -24,5 +24,7 @@ public class BoardDataSearch {
 
     private List<String> bid; // 게시판 ID
 
+    private String userId;
+
 
 }

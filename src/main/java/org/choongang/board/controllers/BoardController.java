@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.choongang.board.entitys.Board;
 import org.choongang.board.entitys.BoardData;
+import org.choongang.board.service.BoardInfoService;
 import org.choongang.board.service.BoardSaveService;
 import org.choongang.board.service.config.BoardConfigInfoService;
 import org.choongang.commons.ExceptionProcessor;
@@ -30,10 +31,12 @@ public class BoardController implements ExceptionProcessor {
     private final FileInfoService fileInfoService;
     private final BoardFormValidator boardFormValidator;
     private final BoardSaveService boardSaveService;
+    private final BoardInfoService boardInfoService;
     private final MemberUtil memberUtil;
     private final Utils utils;
 
     private Board board; // 게시판 설정
+    private BoardData boardData; // 게시글
 
     /**
      * 게시판 목록
@@ -92,6 +95,9 @@ public class BoardController implements ExceptionProcessor {
     @GetMapping("update/{seq}")
     public String update(@PathVariable("seq")Long seq, Model model){
         commonProcess(seq, "update", model);
+
+        RequestBoard form = boardInfoService.getForm(boardData);
+        model.addAttribute("requestBoard", form);
 
         return utils.tpl("board/update");
     }
@@ -176,6 +182,10 @@ public class BoardController implements ExceptionProcessor {
             pageTitle += " ";
             pageTitle += mode.equals("update") ? Utils.getMessage("글수정", "commons") : Utils.getMessage("글쓰기", "commons");
 
+        } else if(mode.equals("view")) {
+            // pageTitle - 글 제목 - 게시판 명
+
+            pageTitle = String.format("%s | %s", board.getSubject(), board.getBName());
         }
 
         model.addAttribute("addCommonCss", addCommonCss);
@@ -192,7 +202,14 @@ public class BoardController implements ExceptionProcessor {
      * @param model
      */
     private void commonProcess(Long seq, String mode, Model model){
+        boardData = boardInfoService.get(seq);
 
+        String bid = boardData.getBoard().getBid();
+
+
+        commonProcess(bid, mode, model);
+
+        model.addAttribute("boardData", boardData);
     }
 
 }
