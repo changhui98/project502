@@ -25,11 +25,11 @@ public class BoardData extends Base {
     @Id @GeneratedValue
     private Long seq;
 
-    @ManyToOne
-    @JoinColumn(name= "boardSeq")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "bid")
     private Board board;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberSeq")
     private Member member;
 
