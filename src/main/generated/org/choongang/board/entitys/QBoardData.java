@@ -26,6 +26,8 @@ public class QBoardData extends EntityPathBase<BoardData> {
 
     public final QBoard board;
 
+    public final StringPath category = createString("category");
+
     public final StringPath content = createString("content");
 
     //inherited

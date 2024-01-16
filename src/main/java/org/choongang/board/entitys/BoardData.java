@@ -36,10 +36,14 @@ public class BoardData extends Base {
     @Column(length=65, nullable = false)
     private String gid= UUID.randomUUID().toString();
 
+    @Column(length = 60)
+    private String category; // 분류
+
     @Column(length = 40, nullable = false)
     private String poster; // 작성자
 
     private String guestPw; // 비회원 비밀번호
+
     private boolean notice; // 공지글 여부 - true : 공지글
 
     @Column(nullable = false)
