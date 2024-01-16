@@ -3,6 +3,8 @@ package org.choongang.board.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.choongang.board.entitys.Board;
+import org.choongang.board.entitys.BoardData;
+import org.choongang.board.service.BoardSaveService;
 import org.choongang.board.service.config.BoardConfigInfoService;
 import org.choongang.commons.ExceptionProcessor;
 import org.choongang.commons.Utils;
@@ -27,6 +29,7 @@ public class BoardController implements ExceptionProcessor {
     private final BoardConfigInfoService configInfoService;
     private final FileInfoService fileInfoService;
     private final BoardFormValidator boardFormValidator;
+    private final BoardSaveService boardSaveService;
     private final MemberUtil memberUtil;
     private final Utils utils;
 
@@ -119,10 +122,10 @@ public class BoardController implements ExceptionProcessor {
             return utils.tpl("board/"+ mode);
         }
 
+        BoardData boardData = boardSaveService.save(form);
 
-        Long seq = 0L; // 임시
         String redirectURL = "/board/";
-        redirectURL += board.getLocationAfterWriting() == "view" ? "view/" + seq : "list/" + form.getBid();
+        redirectURL += board.getLocationAfterWriting() == "view" ? "view/" + boardData.getSeq() : "list/" + form.getBid();
 
         return redirectURL;
     }
