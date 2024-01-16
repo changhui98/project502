@@ -185,7 +185,7 @@ public class BoardController implements ExceptionProcessor {
         } else if(mode.equals("view")) {
             // pageTitle - 글 제목 - 게시판 명
 
-            pageTitle = String.format("%s | %s", board.getSubject(), board.getBName());
+            pageTitle = String.format("%s | %s", boardData.getSubject(), board.getBName());
         }
 
         model.addAttribute("addCommonCss", addCommonCss);
