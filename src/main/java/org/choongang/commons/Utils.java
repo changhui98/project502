@@ -113,13 +113,15 @@ public class Utils {
 
 
     public String printThumb(long seq, int width, int height, String className){
+        try {
         String[] data = fileInfoService.getThumb(seq, width, height);
         if(data != null) {
             String cls = StringUtils.hasText(className) ? " class='" + className + "'" : "";
-            String image = String.format("<img src='%s'%s>",data[1], cls);
+            String image = String.format("<img src='%s'%s>", data[1], cls);
 
             return image;
-        }
+            }
+        } catch (Exception e){}
 
         return "";
     }
