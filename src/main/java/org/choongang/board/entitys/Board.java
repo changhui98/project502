@@ -29,6 +29,8 @@ public class Board extends BaseMember {
     @Column(length = 65, nullable = false)
     private String gid = UUID.randomUUID().toString();
 
+    private int listOrder; // 진열 가중치
+
     @Column(length = 65, nullable = false)
     private String bName; // 게시판 이름
 

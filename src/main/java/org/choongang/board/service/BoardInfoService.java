@@ -79,6 +79,12 @@ public class BoardInfoService {
         return form;
     }
 
+    /**
+     * 특정 게시판 목록을 조회
+     * @param bid : 게시판 ID
+     * @param search
+     * @return
+     */
     public ListData<BoardData> getList(String bid, BoardDataSearch search) {
 
         Board board = configInfoService.get(bid);
@@ -105,17 +111,17 @@ public class BoardInfoService {
             // 제목 - subject LIKE '%skey%';
             BooleanExpression contentCond = boardData.content.contains(skey);
 
-            if (sopt.equals("subject")) {
+            if (sopt.equals("subject")) { // 제목
                 andBuilder.and(subjectCond);
-            } else if (sopt.equals("content")) {
+            } else if (sopt.equals("content")) { // 내용
                 andBuilder.and(contentCond);
-            } else if (sopt.equals("subject_content")) {
+            } else if (sopt.equals("subject_content")) { // 제목 + 내용
                 BooleanBuilder orBuilder = new BooleanBuilder();
                 orBuilder.or(subjectCond)
                         .or(contentCond);
 
                 andBuilder.and(orBuilder);
-            } else if (sopt.equals("poster")) {
+            } else if (sopt.equals("poster")) { // 작성자 + 아이디 + 회원명
                 BooleanBuilder orBuilder = new BooleanBuilder();
                 orBuilder.or(boardData.poster.contains(skey))
                         .or(boardData.member.userId.contains(skey))
@@ -165,10 +171,31 @@ public class BoardInfoService {
     }
 
     /**
+     * 최신 게시글
+     *
+     * @param bid : 게시판 아이디
+     * @param limit : 조회할 갯수
+     * @return
+     */
+    public List<BoardData> getLatest(String bid, int limit) {
+        BoardDataSearch search = new BoardDataSearch();
+        search.setLimit(limit);
+        ListData<BoardData> data = getList(bid, search);
+
+        return data.getItems();
+    }
+
+    public List<BoardData> getLatest(String bid) {
+
+        return getLatest(bid, 10);
+    }
+
+    /**
      * 게시글 추가 정보 처리
      * @param boardData
      */
     public void addBoardData(BoardData boardData){
+        // 파일 정보 추가 Start
         String gid = boardData.getGid();
 
         List<FileInfo> editorFiles = fileInfoService.getListDone(gid, "editor");
@@ -176,6 +203,7 @@ public class BoardInfoService {
 
         boardData.setEditorFiles(editorFiles);
         boardData.setAttachFiles(attachFiles);
+        // 파일 정보 추가 End
 
         boolean editable = false, deletable = false, mine = false;
         Member _member = boardData.getMember(); // null - 비회원 , X null -> 회원
@@ -215,17 +243,19 @@ public class BoardInfoService {
         boardData.setShowEditButton(showEditButton);
         boardData.setShowDeleteButton(showDeleteButton);
 
-
-
+        // 수정 ,삭제 권한 정보 처리 End
     }
 
+    /**
+     * 게시글 조회수 업데이트
+     * @param seq : 게시글 번호
+     */
     public void updateViewCount(Long seq){
 
         BoardData data = boardDataRepository.findById(seq).orElse(null);
         if(data ==null) return;
 
         try {
-
             int uid = memberUtil.isLogin() ?
                     memberUtil.getMember().getSeq().intValue() : utils.guestUid();
 
@@ -233,7 +263,7 @@ public class BoardInfoService {
 
             boardViewRepository.saveAndFlush(boardView);
 
-        }catch (Exception e){
+        }catch (Exception e){}
 
             // 조회수 카운팅 -> 게시글에 업데이트
             QBoardView bv = QBoardView.boardView;
@@ -242,7 +272,7 @@ public class BoardInfoService {
             data.setViewCount(viewCount);
 
             boardViewRepository.flush();
-        }
+
     }
 
 }
