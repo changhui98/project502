@@ -1,9 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{front/layouts/main}">
-<main layout:fragment="items">
-
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="items">
     <th:block th:if="${board.skin == null || board.skin == 'default'}">
         <th:block th:replace="~{front/board/skins/default/_list_items::default}"></th:block>
     </th:block>
@@ -23,6 +20,5 @@
     <th:block th:if="${board.skin == 'blog'}">
         <th:block th:replace="~{front/board/skins/blog/_list_items::blog}"></th:block>
     </th:block>
-
-</main>
+</th:block>
 </html>
