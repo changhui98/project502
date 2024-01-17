@@ -8,6 +8,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.choongang.board.controllers.BoardDataSearch;
 import org.choongang.board.controllers.RequestBoard;
@@ -21,6 +22,7 @@ import org.choongang.commons.Utils;
 import org.choongang.file.entitys.FileInfo;
 import org.choongang.file.service.FileInfoService;
 import org.choongang.member.MemberUtil;
+import org.choongang.member.entitys.Member;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -174,6 +176,47 @@ public class BoardInfoService {
 
         boardData.setEditorFiles(editorFiles);
         boardData.setAttachFiles(attachFiles);
+
+        boolean editable = false, deletable = false, mine = false;
+        Member _member = boardData.getMember(); // null - 비회원 , X null -> 회원
+
+        // 관리자 -> 삭제, 수정 모두 가능
+        if(memberUtil.isAdmin()) {
+            editable = true;
+            deletable = true;
+        }
+        // 회원 -> 직접 작성한 게시글만 삭제, 수정 가능
+        Member member = memberUtil.getMember();
+        if(_member != null && memberUtil.isLogin() && _member.getUserId().equals(member.getUserId())) {
+            editable = true;
+            deletable = true;
+            mine = true;
+        }
+        // 비회원 -> 비회원 비밀번호가 확인 된 경우 삭제, 수정 가능
+        // 비회원 비밀번호 인증 여부 세션에 있는 guest_confirmed_게시글 번호 true -> 인증
+        HttpSession session = request.getSession();
+        String key = "guest_confirmed_" + boardData.getSeq();
+        Boolean guestConfirmed = (Boolean)session.getAttribute(key);
+        if(_member == null && guestConfirmed != null && guestConfirmed) {
+            editable = true;
+            deletable = true;
+            mine = true;
+        }
+
+        boardData.setEditable(editable);
+        boardData.setDeletable(deletable);
+        boardData.setMine(mine);
+
+        // 수정 버튼 노출 여부
+        // 관리자 - 노출, 회원 게시글 - 직접 작성한 게시글, 비회원
+        boolean showEditButton = memberUtil.isAdmin() || mine || _member == null ;
+        boolean showDeleteButton = showEditButton;
+
+        boardData.setShowEditButton(showEditButton);
+        boardData.setShowDeleteButton(showDeleteButton);
+
+
+
     }
 
     public void updateViewCount(Long seq){

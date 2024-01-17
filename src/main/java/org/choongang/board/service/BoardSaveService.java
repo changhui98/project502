@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class BoardSaveService {
 
+    private final BoardAuthService boardAuthService;
     private final BoardRepository boardRepository;
     private final BoardDataRepository boardDataRepository;
     private final FileUploadService fileUploadService;
@@ -28,7 +29,13 @@ public class BoardSaveService {
 
         String mode = form.getMode();
         mode = StringUtils.hasText(mode) ? mode : "write";
+
         Long seq = form.getSeq();
+
+        // 수정 권한 체크
+        if(mode.equals("update")){
+            boardAuthService.check(mode,seq);
+        }
 
         BoardData data = null;
         if(seq != null && mode.equals("update")){ // 글 수정
@@ -78,5 +85,7 @@ public class BoardSaveService {
         fileUploadService.processDone(data.getGid());
         return data;
     }
+
+
 
 }
