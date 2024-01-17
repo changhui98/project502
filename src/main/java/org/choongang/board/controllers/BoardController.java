@@ -1,11 +1,15 @@
 package org.choongang.board.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.choongang.board.entitys.Board;
 import org.choongang.board.entitys.BoardData;
+import org.choongang.board.service.BoardAuthService;
 import org.choongang.board.service.BoardInfoService;
 import org.choongang.board.service.BoardSaveService;
+import org.choongang.board.service.GuestPasswordCheckException;
 import org.choongang.board.service.config.BoardConfigInfoService;
 import org.choongang.commons.ExceptionProcessor;
 import org.choongang.commons.Utils;
@@ -33,6 +37,7 @@ public class BoardController implements ExceptionProcessor {
     private final BoardSaveService boardSaveService;
     private final BoardInfoService boardInfoService;
     private final MemberUtil memberUtil;
+    private final BoardAuthService boardAuthService;
     private final Utils utils;
 
     private Board board; // 게시판 설정
@@ -202,6 +207,8 @@ public class BoardController implements ExceptionProcessor {
      * @param model
      */
     private void commonProcess(Long seq, String mode, Model model){
+        boardAuthService.check(mode,seq);
+
         boardData = boardInfoService.get(seq);
 
         String bid = boardData.getBoard().getBid();
@@ -212,4 +219,15 @@ public class BoardController implements ExceptionProcessor {
         model.addAttribute("boardData", boardData);
     }
 
+    @Override
+    @ExceptionHandler(Exception.class)
+    public String errorHandler(Exception e, HttpServletResponse response, HttpServletRequest request, Model model) {
+
+        if(e instanceof GuestPasswordCheckException) {
+
+            return utils.tpl("board/password");
+        }
+
+        return ExceptionProcessor.super.errorHandler(e, response, request, model);
+    }
 }
