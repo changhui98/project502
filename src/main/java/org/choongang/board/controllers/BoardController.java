@@ -6,12 +6,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.choongang.board.entitys.Board;
 import org.choongang.board.entitys.BoardData;
-import org.choongang.board.service.BoardAuthService;
-import org.choongang.board.service.BoardInfoService;
-import org.choongang.board.service.BoardSaveService;
-import org.choongang.board.service.GuestPasswordCheckException;
+import org.choongang.board.service.*;
 import org.choongang.board.service.config.BoardConfigInfoService;
 import org.choongang.commons.ExceptionProcessor;
+import org.choongang.commons.ListData;
 import org.choongang.commons.Utils;
 import org.choongang.file.entitys.FileInfo;
 import org.choongang.file.service.FileInfoService;
@@ -33,11 +31,14 @@ public class BoardController implements ExceptionProcessor {
 
     private final BoardConfigInfoService configInfoService;
     private final FileInfoService fileInfoService;
+
     private final BoardFormValidator boardFormValidator;
     private final BoardSaveService boardSaveService;
     private final BoardInfoService boardInfoService;
-    private final MemberUtil memberUtil;
+    private final BoardDeleteService boardDeleteService;
     private final BoardAuthService boardAuthService;
+
+    private final MemberUtil memberUtil;
     private final Utils utils;
 
     private Board board; // 게시판 설정
@@ -51,8 +52,13 @@ public class BoardController implements ExceptionProcessor {
      * @return
      */
     @GetMapping("/list/{bid}")
-    public String list(@PathVariable("bid") String bid, Model model){
+    public String list(@PathVariable("bid") String bid, @ModelAttribute BoardDataSearch search ,Model model){
         commonProcess(bid, "list", model);
+
+        ListData<BoardData> data = boardInfoService.getList(bid, search);
+
+        model.addAttribute("items",data.getItems());
+        model.addAttribute("pagination", data.getPagination());
 
         return utils.tpl("board/list");
     }
@@ -65,14 +71,22 @@ public class BoardController implements ExceptionProcessor {
      * @return
      */
     @GetMapping("/view/{seq}")
-    public String view(@PathVariable("seq") Long seq, Model model){
+    public String view(@PathVariable("seq") Long seq, @ModelAttribute BoardDataSearch search, Model model){
         commonProcess(seq, "view", model);
 
+        // 게시글 보기 하단 목록 노출 Start
+        if(board.isShowListBelowView()) {
+            ListData<BoardData> data = boardInfoService.getList(board.getBid(),search);
+
+            model.addAttribute("items", data.getItems());
+            model.addAttribute("pagination", data.getPagination());
+        }
+        // 게시글 보기 하단 목록 노출 End
         return utils.tpl("board/view");
     }
 
     /**
-     * 게시글 생성
+     * 게시글 작성
      *
      * @param bid
      * @param model
@@ -133,12 +147,39 @@ public class BoardController implements ExceptionProcessor {
             return utils.tpl("board/"+ mode);
         }
 
+        // 게시글 저장 처리
         BoardData boardData = boardSaveService.save(form);
 
-        String redirectURL = "/board/";
-        redirectURL += board.getLocationAfterWriting() == "view" ? "view/" + boardData.getSeq() : "list/" + form.getBid();
+        String redirectURL = "redirect:/board/";
+        redirectURL += board.getLocationAfterWriting().equals("view") ? "view/" + boardData.getSeq() : "list/" + form.getBid();
 
         return redirectURL;
+    }
+
+    @GetMapping("/delete/{seq}")
+    public String delete(@PathVariable("seq") Long seq, Model model){
+        commonProcess(seq, "delete",model);
+
+        boardDeleteService.delete(seq);
+
+        return "redirect:/board/list" + board.getBid();
+
+    }
+
+    /**
+     * 비회원 글수정, 글삭제 비밀번호 확인
+     * @param password
+     * @param model
+     * @return
+     */
+    @PostMapping("/password")
+    public String passwordCheck(
+            @RequestParam(name="password", required = false) String password, Model model
+    ){
+        boardAuthService.validate(password);
+        model.addAttribute("script", "parent.location.reload();");
+
+        return "common/_execute_script";
     }
 
     /**
@@ -161,20 +202,20 @@ public class BoardController implements ExceptionProcessor {
         /* 게시판 설정 처리 Start */
         board = configInfoService.get(bid);
 
+        // 접근 권한 체크
+        boardAuthService.accessCheck(mode, board);
+
         String skin = board.getSkin(); // 스킨별 css, js 추가
         addCss.add("board/skin_" + skin);
         addScript.add("board/skin_" + skin);
-
 
         model.addAttribute("board", board);
         /* 게시판 설정 처리 End */
 
         String pageTitle = board.getBName(); // 게시판명이 기본 타이틀
 
-
-
-        if(mode.equals("write") || mode.equals("update")) {
-            if(board.isUseEditor()) {
+        if(mode.equals("write") || mode.equals("update")) { // 쓰기 또는 수정
+            if(board.isUseEditor()) { // 에디터 사용하는 경우
                 addCommonScript.add("ckeditor5/ckeditor");
             }
 
@@ -184,12 +225,12 @@ public class BoardController implements ExceptionProcessor {
             }
 
             addScript.add("board/form");
+
             pageTitle += " ";
             pageTitle += mode.equals("update") ? Utils.getMessage("글수정", "commons") : Utils.getMessage("글쓰기", "commons");
 
         } else if(mode.equals("view")) {
             // pageTitle - 글 제목 - 게시판 명
-
             pageTitle = String.format("%s | %s", boardData.getSubject(), board.getBName());
         }
 
@@ -197,6 +238,7 @@ public class BoardController implements ExceptionProcessor {
         model.addAttribute("addCss", addCss);
         model.addAttribute("addCommonScript", addCommonScript);
         model.addAttribute("addScript", addScript);
+        model.addAttribute("pageTitle", pageTitle);
     }
 
     /**
@@ -207,13 +249,12 @@ public class BoardController implements ExceptionProcessor {
      * @param model
      */
     private void commonProcess(Long seq, String mode, Model model){
+        // 글수정, 글삭제 권한 체크
         boardAuthService.check(mode,seq);
 
         boardData = boardInfoService.get(seq);
 
         String bid = boardData.getBoard().getBid();
-
-
         commonProcess(bid, mode, model);
 
         model.addAttribute("boardData", boardData);

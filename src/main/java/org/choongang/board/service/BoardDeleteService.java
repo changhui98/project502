@@ -21,6 +21,7 @@ public class BoardDeleteService {
      */
     public void delete(Long seq){
 
+        // 삭제 권한 체크
         boardAuthService.check("delete", seq);
 
         BoardData data = boardInfoService.get(seq);

@@ -8,6 +8,7 @@ import org.choongang.board.service.config.BoardConfigInfoService;
 import org.choongang.commons.Utils;
 import org.choongang.commons.exceptions.AlertException;
 import org.choongang.commons.exceptions.UnAuthorizedException;
+import org.choongang.member.Authority;
 import org.choongang.member.MemberUtil;
 import org.choongang.member.entitys.Member;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class BoardAuthService {
      * @param seq : 게시글 번호
      */
     public void check(String mode, Long seq){
-        if(memberUtil.isAdmin()) {
+        if(memberUtil.isAdmin()) { // 관리자는 체크 불필요
             return;
         }
 
@@ -44,6 +45,8 @@ public class BoardAuthService {
 
             // 비회원 -> 비밀번호 확인 필요
             if(member == null) {
+                session.setAttribute("mode", mode);
+                session.setAttribute("seq", seq);
                 throw new GuestPasswordCheckException();
             }
 
@@ -63,7 +66,7 @@ public class BoardAuthService {
         mode = StringUtils.hasText(mode) ? mode : "update";
 
         String key = null;
-        if(mode.equals("update") || mode.equals("delete")) {
+        if(mode.equals("update") || mode.equals("delete")) { // 비회원 게시글
 
             BoardData data = infoService.get(seq);
 
@@ -73,6 +76,7 @@ public class BoardAuthService {
             }
 
             key = "guest_confirmed_" + seq;
+
         }else if(mode.equals("comment_update") || mode.equals("comment_delete")) { // 비회원 댓글
 
 
@@ -86,6 +90,11 @@ public class BoardAuthService {
 
     }
 
+    /**
+     * 글쓰기, 글보기, 글목록 접근 권한 체크
+     * @param mode
+     * @param bid
+     */
     public void accessCheck(String mode, String bid){
         Board board = boardConfigInfoService.get(bid);
         accessCheck(mode, board);
@@ -98,13 +107,33 @@ public class BoardAuthService {
         }
 
         boolean accessible = false;
-
+        Authority target = Authority.ALL;
         if (mode.equals("write") || mode.equals("update")) { // 글쓰기 페이지
+            target = board.getWriteAccessType();
 
         } else if (mode.equals("view")) { // 글 보기 페이지
+            target = board.getViewAccessType();
 
         } else if (mode.equals("list")) { // 글 목록 페이지
+            target = board.getListAccessType();
+        }
+
+        if(target == Authority.ALL) { // 전체 접근 가능
+            accessible = true;
+        }
+
+        if(target == Authority.USER && memberUtil.isLogin()) { // 회원 + 관리자
+            accessible = true;
+        }
+
+        if(target == Authority.ADMIN && memberUtil.isAdmin()) { // 관리자
+            accessible = true;
+        }
+
+        if(!accessible){ // 접근 불가 페이지
+            throw new UnAuthorizedException();
 
         }
+
     }
 }

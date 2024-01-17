@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.choongang.admin.menus.Menu;
 import org.choongang.admin.menus.MenuDetail;
 import org.choongang.board.entitys.Board;
+import org.choongang.board.service.config.BoardConfigDeleteService;
 import org.choongang.board.service.config.BoardConfigInfoService;
 import org.choongang.board.service.config.BoardConfigSaveService;
 import org.choongang.commons.ExceptionProcessor;
@@ -27,6 +28,7 @@ public class BoardController implements ExceptionProcessor {
     private final BoardConfigSaveService configSaveService;
     private final BoardConfigInfoService configInfoService;
     private final BoardConfigValidator configValidator;
+    private final BoardConfigDeleteService boardConfigDeleteService;
 
     // 주 메뉴 코드
     @ModelAttribute("menuCode")
@@ -51,7 +53,7 @@ public class BoardController implements ExceptionProcessor {
     public String list(@ModelAttribute BoardSearch search, Model model){
         commonProcess("list", model);
 
-        ListData<Board> data = configInfoService.getList(search);
+        ListData<Board> data = configInfoService.getList(search, true);
 
         List<Board> items = data.getItems();
         Pagination pagination = data.getPagination();
